@@ -48,5 +48,5 @@ jobs:
           context: .
           # Lowercase the entire repo owner/repo to satisfy Docker tag rules
           tags: |
-            ghcr.io/${{ toLower(github.repository) }}:latest
-            ghcr.io/${{ toLower(github.repository) }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
