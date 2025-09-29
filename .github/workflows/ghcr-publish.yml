@@ -7,7 +7,7 @@ on:
       - 'app/**'
       - 'Dockerfile'
       - 'requirements.txt'
-      - '.github/workflows/gcr-publish.yml'
+      - '.github/workflows/ghcr-publish.yml'
       - 'docker-compose.yml'
       - 'README.md'
   workflow_dispatch:
@@ -22,6 +22,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
 
     steps:
       - name: Check out code
@@ -45,6 +46,7 @@ jobs:
         with:
           push: true
           context: .
+          # Lowercase the entire repo owner/repo to satisfy Docker tag rules
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/${{ toLower(env.IMAGE_NAME) }}:latest
-            ghcr.io/${{ toLower(github.repository_owner) }}/${{ toLower(env.IMAGE_NAME) }}:${{ github.sha }}
+            ghcr.io/${{ toLower(github.repository) }}:latest
+            ghcr.io/${{ toLower(github.repository) }}:${{ github.sha }}
