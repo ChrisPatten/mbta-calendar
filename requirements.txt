@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+httpx
+icalendar
+python-dateutil
+pydantic
+pytest

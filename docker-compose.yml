@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  mbta-cal:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MBTA_API_KEY=${MBTA_API_KEY:-}
+      - DEFAULT_HOME_STOP=${DEFAULT_HOME_STOP:-}
+      - DEFAULT_WORK_STOP=${DEFAULT_WORK_STOP:-}
