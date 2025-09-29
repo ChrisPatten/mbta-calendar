@@ -305,7 +305,11 @@ async def _fetch_departures(
         dir_id = trip_attrs.get("direction_id")
         direction_value = direction_id if not isinstance(dir_id, int) else dir_id
         stop_sequence = attributes.get("stop_sequence") or 0
-        arrival_local = dest_arrivals.get(trip_id)
+        service_date = departure_local.date().isoformat()
+        arrival_local = dest_arrivals.get((trip_id, service_date))
+        if arrival_local is None:
+            next_day = (departure_local + timedelta(days=1)).date().isoformat()
+            arrival_local = dest_arrivals.get((trip_id, next_day))
         departures.append(
             Departure(
                 trip_id=trip_id,
@@ -325,8 +329,8 @@ async def _fetch_departures(
     return departures
 
 
-def _build_arrival_map(data: List[Dict[str, object]]) -> Dict[str, datetime]:
-    arrivals: Dict[str, datetime] = {}
+def _build_arrival_map(data: List[Dict[str, object]]) -> Dict[Tuple[str, str], datetime]:
+    arrivals: Dict[Tuple[str, str], datetime] = {}
     for item in data:
         if not isinstance(item, dict):
             continue
@@ -345,9 +349,11 @@ def _build_arrival_map(data: List[Dict[str, object]]) -> Dict[str, datetime]:
             dt = datetime.fromisoformat(raw_time).astimezone(EASTERN)
         except ValueError:
             continue
-        current = arrivals.get(trip_id)
+        service_date = dt.date().isoformat()
+        key = (trip_id, service_date)
+        current = arrivals.get(key)
         if current is None or dt > current:
-            arrivals[trip_id] = dt
+            arrivals[key] = dt
     return arrivals
 
 
